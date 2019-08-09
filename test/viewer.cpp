@@ -38,7 +38,7 @@ ImVec4 lerp(const ImVec4 &v0, const ImVec4 &v1, float t);
 void SetThemeDark(ImGuiStyle *style);
 void SetFont(ImFontAtlas *fonts);
 
-void DrawUI();
+void DrawUI(unsigned windowWidth, unsigned windowHeight);
 
 int main (int argc, char *argv[])
 {
@@ -126,7 +126,9 @@ int main (int argc, char *argv[])
         ImGui_ImplOpenGL3_NewFrame(imguiOpenGlCtx);
         ImGui_ImplGlfw_NewFrame(imguiGlfwCtx);
 
-        DrawUI();
+        int width, height;
+        glfwGetWindowSize(mainWindow, &width, &height);
+        DrawUI(width, height);
 
         ImGui_ImplOpenGL3_RenderDrawData(imguiOpenGlCtx, ImGui::GetDrawData());
 
@@ -271,14 +273,14 @@ static const pfnDrawUIShape drawUIShapeFn[] = {
     DrawUITorusKnot,
 };
 
-void DrawUI()
+void DrawUI(unsigned windowWidth, unsigned windowHeight)
 {
     ImGui::NewFrame();
 
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context. Refer to examples app!"); // Exceptionally add an extra assert here for people confused with initial dear imgui setup
     // We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
-    ImGui::SetNextWindowPos(ImVec2(20, 20));
-    ImGui::SetNextWindowSize(ImVec2(480, 640), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::SetNextWindowSize(ImVec2(360, windowHeight));
 
     // Control panel window items
     // Shape selection
@@ -296,7 +298,7 @@ void DrawUI()
         "Torus Knot"
     }; 
 
-    ImGui::Begin("Control Panel", nullptr);
+    ImGui::Begin("Control Panel", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
     if (ImGui::CollapsingHeader("Generate", ImGuiTreeNodeFlags_DefaultOpen))
     {
